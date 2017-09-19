@@ -1,4 +1,5 @@
 const Telegraf = require('telegraf')
+require('dotenv-safe').load()
 
 const app = new Telegraf(process.env.BOT_TOKEN)
 const state = {}
@@ -15,7 +16,7 @@ app.command('end', ({ from, reply }) => {
   // Send data
   return reply('End of input');
 });
-app.hears(/([\d\+]+)\s([\w\s]+)(?:(?:;\s)([\w\s]*))?(?:(?:\s?\|\s?)(.*))?/, ({ match, from, reply }) => {
+app.hears(/([\d\+\-]+)\s([\w\s]+)(?:(?:;\s)([\w\s]*))?(?:(?:\s?\|\s?)(.*))?/, ({ match, from, reply }) => {
   if (!!state[from.username]) {
     state[from.username].data.push({
       amount: match[1],

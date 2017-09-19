@@ -24,6 +24,4 @@ coverage
 logs
 *.log
 
-public/sw.js
-sw-files-manifest.json
-secret.json
+.env
