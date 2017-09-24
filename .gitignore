@@ -26,3 +26,5 @@ logs
 
 .env
 .vscode
+
+client_secret.json
