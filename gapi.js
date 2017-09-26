@@ -48,7 +48,7 @@ function storeToken(token, username) {
 const convertDataToRow = record =>
   [
     !!record.date ? record.date.toString() : '',
-    !!record.amount ? record.amount.toString() : '',
+    !!record.amount ? `=${record.amount.toString()}` : '',
     !!record.description ? record.description.toString() : '',
     !!record.category ? record.category.toString() : ''
   ];
@@ -94,7 +94,6 @@ module.exports = {
           console.log('The API returned an error: ' + err);
           return reject(err);
         }
-        console.log(response);
         resolve('OK');
       })
     });
