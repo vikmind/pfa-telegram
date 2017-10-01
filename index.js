@@ -8,18 +8,24 @@ const markup = Extra.HTML();
 
 app.command('start', ({ from, reply }) =>
   gapi.getClient(from.username)
-    .then(client => 
+    .then(client =>
       reply(`Welcome ${from.username}! Send code from this <a href="${gapi.getLink(client)}">link</a> for authorization.`, markup))
 );
 app.command('auth', ({ from, reply }) =>
   gapi.getClient(from.username)
-    .then(client => 
+    .then(client =>
       reply(`Send code from this <a href="${gapi.getLink(client)}">link</a> for authorization.`, markup))
+);
+app.command('list', ({ from, reply }) =>
+  gapi.getClient(from.username)
+    .then(client => gapi.categories(client))
+    .then(values => reply(values.join(',\n')))
+    .catch(e => reply(`Can't do this, because: <b>${e.message}</b>`, markup))
 );
 app.command('help', ({ reply }) =>
   reply('<b>Message format</b>:\nSUM CATEGORY; &lt;DESCRIPTION&gt; | &lt;DATE&gt;', markup)
 );
-app.hears(/([\d\+\-\*]+)\s([а-яА-Я\w\s]+)(?:(?:;\s)([а-яА-Я\w\s]*))?(?:(?:\s?\|\s?)(.*))?/, ({ match, from, reply }) => 
+app.hears(/([\d\+\-\*]+)\s([,а-яА-Я\w\s]+)(?:(?:;\s)([,а-яА-Я\w\s]*))?(?:(?:\s?\|\s?)(.*))?/, ({ match, from, reply }) =>
   gapi.getClient(from.username)
     .then(client => gapi.append(client, {
       amount: match[1],

@@ -2,6 +2,7 @@ const fs = require('fs');
 const google = require('googleapis');
 const googleAuth = require('google-auth-library');
 const secrets = require('./client_secret.json');
+const adapter = require(`./adapters/${process.env.ADAPTER}`);
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
@@ -22,16 +23,22 @@ function getClient(credentials, clients, username) {
       const auth = new googleAuth();
       const oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
       clients[username] = oauth2Client;
-      fs.readFile(getCredentialsPath(username), function(err, token) {
-        if (err) {
-          resolve(oauth2Client);
-        } else {
-          oauth2Client.credentials = JSON.parse(token);
-          resolve(oauth2Client);
-        }
-      });
+      resolve(checkToken(username, oauth2Client));
     }
   });
+}
+
+function checkToken(username, oauth2Client) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(getCredentialsPath(username), function(err, token) {
+      if (err) {
+        resolve(oauth2Client);
+      } else {
+        oauth2Client.credentials = JSON.parse(token);
+        resolve(oauth2Client);
+      }
+    });
+  })
 }
 
 function storeToken(token, username) {
@@ -44,14 +51,6 @@ function storeToken(token, username) {
   }
   fs.writeFile(getCredentialsPath(username), JSON.stringify(token));
 }
-
-const convertDataToRow = record =>
-  [
-    !!record.date ? record.date.toString() : '',
-    !!record.amount ? `=${record.amount.toString()}` : '',
-    !!record.description ? record.description.toString() : '',
-    !!record.category ? record.category.toString() : ''
-  ];
 
 module.exports = {
   getClient: getClient.bind(null, secrets, store),
@@ -74,7 +73,7 @@ module.exports = {
           oauth2Client.credentials = token;
           storeToken(token, username);
           resolve(token);
-        }); 
+        });
       }
     });
   },
@@ -84,10 +83,10 @@ module.exports = {
       sheets.spreadsheets.values.append({
         auth: auth,
         spreadsheetId: process.env.SHEET_ID,
-        range: 'Transactions!B6:E',
+        range: adapter.insertRange(),
         valueInputOption: 'USER_ENTERED',
         resource: {
-          values: [convertDataToRow(data)]
+          values: [adapter.dataToRow(data)]
         }
       }, function(err, response) {
         if (err) {
@@ -96,6 +95,22 @@ module.exports = {
         }
         resolve('OK');
       })
+    });
+  },
+  categories: function(auth) {
+    return new Promise((resolve, reject) => {
+      const sheets = google.sheets('v4');
+      sheets.spreadsheets.values.get({
+        auth: auth,
+        spreadsheetId: process.env.SHEET_ID,
+        range: adapter.categoriesRange(),
+      }, function(err, response) {
+        if (err) {
+          console.log('The API returned an error: ' + err);
+          return reject(err);
+        }
+        resolve(response.values);
+      });
     });
   },
 };
