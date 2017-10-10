@@ -1,6 +1,4 @@
-require('dotenv-safe').load({
-  allowEmptyValues: true,
-});
+require('dotenv').config();
 
 const massive = require('massive');
 const query = require('fs').readFileSync('./table.sql', { encoding: 'utf8' });
