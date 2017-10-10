@@ -10,11 +10,12 @@ module.exports = function({
 
   return {
     getClient: function getClient(username) {
-      const clientSecret = secrets.installed.client_secret;
-      const clientId = secrets.installed.client_id;
-      const redirectUrl = secrets.installed.redirect_uris[0];
       const auth = new googleAuth();
-      const oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
+      const oauth2Client = new auth.OAuth2(
+        secrets.installed.client_id,
+        secrets.installed.client_secret,
+        secrets.installed.redirect_uris[0],
+      );
       return store.find(username)
         .then(credentials => {
           oauth2Client.credentials = credentials

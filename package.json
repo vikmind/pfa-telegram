@@ -5,7 +5,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "prepare": "node prepareDB.js"
   },
   "dependencies": {
     "dotenv": "^4.0.0",
@@ -14,5 +15,8 @@
     "googleapis": "^22.1.0",
     "massive": "^4.4.0",
     "telegraf": "^3.10.1"
+  },
+  "engines": {
+    "node": "8.4.0"
   }
 }

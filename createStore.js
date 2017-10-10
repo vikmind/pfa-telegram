@@ -1,51 +1,45 @@
 module.exports = function({
-  fs,
+  massive,
   dbHost,
   dbPort,
   dbName,
   dbUser,
   dbPassword,
 }) {
+  const connectionInfo = {
+    host: dbHost,
+    port: dbPort,
+    database: dbName,
+    user: dbUser,
+    passsword: dbPassword,
+    poolSize: 10,
+  };
+  let db = null;
 
-  const TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
-    process.env.USERPROFILE) + '/.credentials/';
-  const getCredentialsPath =
-    username => `${TOKEN_DIR}sheets.googleapis.com-pfa-telgram-${username}.json`;
-  function findFS(username) {
-    return new Promise((resolve, reject) => {
-      fs.readFile(getCredentialsPath(username), function(err, token) {
-        if (err) {
-          reject(err);
-        } else {
-          const credentials = JSON.parse(token);
-          resolve(credentials);
-        }
-      });
-    })
-  }
-
-  function saveFS(username, token) {
-    return new Promise((resolve, reject) => {
-      try {
-        fs.mkdirSync(TOKEN_DIR);
-      } catch (err) {
-        if (err.code != 'EEXIST') {
-          reject(err);
-        }
-      }
-      fs.writeFile(getCredentialsPath(username), JSON.stringify(token), err => {
-        if (err) reject(err);
-        resolve(token);
-      });
-    });
-  }
+  const getInstance = () => new Promise(function(resolve, reject){
+    if (!!db) {
+      resolve(db);
+    } else {
+      resolve(massive(connectionInfo)
+        .then(instance => { db = instance; return Promise.resolve(db); }));
+    }
+  });
 
   return {
     find(username) {
-      return findFS(username);
+      return getInstance()
+        .then(db => db.auth.findOne({ username }))
+        .then(record => Promise.resolve(record.key));
     },
     save(username, data) {
-      return saveFS(username, data);
+      return getInstance()
+        .then(db => db.auth.insert({ username, key: data }))
+        .then(record => Promise.resolve(record.key));
     },
+    update(username, data) {
+      return getInstance()
+        .then(db => db.auth.insert({ username, key: data }))
+        .then(record => Promise.resolve(record.key));
+    }
   }
 };

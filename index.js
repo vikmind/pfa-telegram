@@ -3,7 +3,7 @@ require('dotenv-safe').load({
 });
 
 const store = require('./createStore')({
-  fs: require('fs'),
+  massive: require('massive'),
   dbHost: process.env.DB_HOST,
   dbPort: process.env.DB_PORT,
   dbName: process.env.DB_NAME,
