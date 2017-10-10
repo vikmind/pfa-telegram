@@ -1,48 +1,35 @@
-require('dotenv-safe').load()
-const Telegraf = require('telegraf')
-const gapi = require('./gapi');
-const { Extra } = require('Telegraf');
+require('dotenv-safe').load({
+  allowEmptyValues: true,
+});
 
-const app = new Telegraf(process.env.BOT_TOKEN)
-const markup = Extra.HTML();
+const store = require('./createStore')({
+  fs: require('fs'),
+  dbHost: process.env.DB_HOST,
+  dbPort: process.env.DB_PORT,
+  dbName: process.env.DB_NAME,
+  dbUser: process.env.DB_USER,
+  dbPassword: process.env.DB_PASSWORD,
+});
 
-app.command('start', ({ from, reply }) =>
-  gapi.getClient(from.username)
-    .then(client =>
-      reply(`Welcome ${from.username}! Send code from this <a href="${gapi.getLink(client)}">link</a> for authorization.`, markup))
-);
-app.command('auth', ({ from, reply }) =>
-  gapi.getClient(from.username)
-    .then(client =>
-      reply(`Send code from this <a href="${gapi.getLink(client)}">link</a> for authorization.`, markup))
-);
-app.command('list', ({ from, reply }) =>
-  gapi.getClient(from.username)
-    .then(client => gapi.categories(client))
-    .then(values => reply(values.join(',\n')))
-    .catch(e => reply(`Can't do this, because: <b>${e.message}</b>`, markup))
-);
-app.command('help', ({ reply }) =>
-  reply('<b>Message format</b>:\nSUM CATEGORY; &lt;DESCRIPTION&gt; | &lt;DATE&gt;', markup)
-);
-app.hears(/([\d\+\-\*]+)\s([,а-яА-Я\w\s]+)(?:(?:;\s)([,а-яА-Я\w\s]*))?(?:(?:\s?\|\s?)(.*))?/, ({ match, from, reply }) =>
-  gapi.getClient(from.username)
-    .then(client => gapi.append(client, {
-      amount: match[1],
-      category: match[2],
-      description: match[3],
-      date: match[4] || (new Date).toJSON().slice(0, 10),
-    }))
-    .then(msg => reply('Done!'))
-    .catch(e => reply(`Can't do this, because: <b>${e.message}</b>`, markup))
-);
-app.hears(/(.*)/, ({ match, from, reply }) =>
-  gapi.getClient(from.username)
-    .then(client => gapi.authorize(client, from.username, match[1]))
-    .then(status => (status !== 'already')
-        ? reply('You successfully authorized, run \/help for available commands')
-        : null)
-    .catch(e => reply(`Can't authorize you, because: <b>${e.message}</b>`, markup))
-);
+const gapi = require('./createGapi')({
+  google: require('googleapis'),
+  googleAuth: require('google-auth-library'),
+  sheetId: process.env.SHEET_ID,
+  secrets: JSON.parse(process.env.CLIENT_SECRET),
+  adapter: require(`./adapters/${process.env.ADAPTER}`),
+  store,
+});
+
+const main = require('./createApp')({
+  Telegraf: require('telegraf'),
+  webroot: process.env.WEBHOOK_ROOT,
+  token: process.env.BOT_TOKEN,
+  gapi,
+});
+
 console.log('start listening');
-app.startPolling()
+if (process.env.POLLING === 'true') {
+  main.startPolling();
+} else {
+  main.start(process.env.PORT);
+}
