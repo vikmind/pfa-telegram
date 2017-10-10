@@ -5,6 +5,7 @@ module.exports = function({
   dbName,
   dbUser,
   dbPassword,
+  dbUrl,
 }) {
   const connectionInfo = {
     host: dbHost,
@@ -20,7 +21,7 @@ module.exports = function({
     if (!!db) {
       resolve(db);
     } else {
-      resolve(massive(connectionInfo)
+      resolve(massive(dbUrl || connectionInfo)
         .then(instance => { db = instance; return Promise.resolve(db); }));
     }
   });

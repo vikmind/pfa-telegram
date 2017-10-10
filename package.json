@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
-    "prepare": "node prepareDB.js"
+    "postinstall": "node prepareDB.js"
   },
   "dependencies": {
     "dotenv": "^4.0.0",
