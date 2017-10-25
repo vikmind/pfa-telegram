@@ -29,7 +29,7 @@ module.exports = function({
   app.command('help', ({ reply }) =>
     reply('<b>Message format</b>:\nSUM CATEGORY; &lt;DESCRIPTION&gt; | &lt;DATE&gt;', markup)
   );
-  app.hears(/([\d\+\-\*]+)\s([,а-яА-Я\w\s]+)(?:(?:;\s)([,а-яА-Я\w\s]*))?(?:(?:\s?\|\s?)(.*))?/, ({ match, from, reply }) =>
+  app.hears(/([\d\.\+\-\*]+)\s([,а-яА-Я\w\s]+)(?:(?:;\s)([,а-яА-Я\w\s]*))?(?:(?:\s?\|\s?)(.*))?/, ({ match, from, reply }) =>
     gapi.getClient(from.username)
       .then(client => gapi.append(client, {
         amount: match[1],
