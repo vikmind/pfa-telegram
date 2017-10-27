@@ -2,15 +2,14 @@
 
 Send your spendings to bot and it will add them to specified spreadsheet.
 
-## Quick start: general
+## Preparation steps
 
 1. Add google credentials as described in [Google Sheets API Node.js Quickstart](https://developers.google.com/sheets/api/quickstart/nodejs#step_1_turn_on_the_api_name), content of ``client_secret.json`` file is ``CLIENT_SECRET``
 1. Create your bot with [@botfather](https://telegram.me/botfather), it's token is ``BOT_TOKEN``
 1. Create spreadsheet with Google's template ``Monthly budget``, assign ``SHEET_ID`` variable to its ID
 
-## Quick start: locally
+## Starting locally
 
-1. Steps from "General" part
 1. ``cp .env.example .env``
 1. Fill ``.env``:
     1. ``POLLING=true``: for local usage you can work without webhook's configuratoin
@@ -18,11 +17,11 @@ Send your spendings to bot and it will add them to specified spreadsheet.
 1. ``npm install``
 1. ``npm start``
 
-## Quick start: Heroku
+## Deploy to [Heroku](https://heroku.com)
 
 You can deploy your own instance of this bot by following this steps:
 
-1. Steps from "General" part
+1. Install [Heroku CLI](https://devcenter.heroku.com/articles/getting-started-with-nodejs#set-up)
 1. Create project ``heroku create <your-name>``
 1. Add postgress add-on ``heroku addons:create heroku-postgresql:hobby-dev``
 1. Fill environment variables on project's dashboard:
