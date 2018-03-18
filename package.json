@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
+    "lt": "lt --port 3000",
     "postinstall": "node prepareDB.js"
   },
   "dependencies": {
@@ -14,9 +15,12 @@
     "google-auth-library": "^0.11.0",
     "googleapis": "^22.1.0",
     "massive": "^4.4.0",
-    "telegraf": "^3.10.1"
+    "telegraf": "^3.19.0"
   },
   "engines": {
     "node": "8.4.0"
+  },
+  "devDependencies": {
+    "localtunnel": "^1.8.3"
   }
 }
