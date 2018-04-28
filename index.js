@@ -2,15 +2,19 @@ require('dotenv-safe').load({
   allowEmptyValues: true,
 });
 
-const store = require('./createStore')({
-  massive: require('massive'),
-  dbHost: process.env.DB_HOST,
-  dbPort: process.env.DB_PORT,
-  dbName: process.env.DB_NAME,
-  dbUser: process.env.DB_USER,
-  dbPassword: process.env.DB_PASSWORD,
-  dbUrl: process.env.DATABASE_URL,
-});
+const store = (process.env.STORAGE === 'file')
+  ? require('./createFileStore')({
+    fs: require('fs'),
+  })
+  : require('./createStore')({
+    massive: require('massive'),
+    dbHost: process.env.DB_HOST,
+    dbPort: process.env.DB_PORT,
+    dbName: process.env.DB_NAME,
+    dbUser: process.env.DB_USER,
+    dbPassword: process.env.DB_PASSWORD,
+    dbUrl: process.env.DATABASE_URL,
+  });
 
 const gapi = require('./createGapi')({
   google: require('googleapis'),

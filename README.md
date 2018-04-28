@@ -13,7 +13,7 @@ Send your spendings to bot and it will add them to specified spreadsheet.
 1. ``cp .env.example .env``
 1. Fill ``.env``:
     1. ``POLLING=true``: for local usage you can work without webhook's configuratoin
-    1. ``DATABASE_URL`` or ``DB_USER``, ``DB_NAME``, ``DB_PORT``, ``DB_HOST`` or ``DB_PASSWORD`` for Postgres config
+    1. ``STORAGE=file``: for quick start you shouldn't configure db
 1. ``npm install``
 1. ``npm start``
 
@@ -29,6 +29,7 @@ You can deploy your own instance of this bot by following this steps:
     1. ``POLLING=false``: Apps on Heroku shut down from time to time, so you need to use webhooks.
     1. ``BOT_TOKEN``, ``SHEET_ID``, ``CLIENT_SECRET``: see above
     1. ``ADAPTER=standart``
+    1. ``STORAGE=db``
 1. ``git push heroku master``
 
 ## About adapters
