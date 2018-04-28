@@ -15,7 +15,12 @@ module.exports = function({
           reject(new Error('User credentials not found'));
         fs.readFile(keyFile(username), (err, data) => {
           if (err) reject(err);
-          resolve(JSON.parse(data));
+          try {
+            resolve(JSON.parse(data));
+          }
+          catch (e) {
+            reject(e)
+          }
         });
       });
     },
