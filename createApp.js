@@ -55,9 +55,24 @@ module.exports = function({
       )
       .catch(e => reply(`Can't do this, because: <b>${e.message}</b>`, markup))
   });
+  // <Value> <Description>; <Category>
+  app.hears(/([\d\.\+\-\*]+)\s([,а-яА-Я\w\s]+);\s([,а-яА-Я\w\s]+)/, ({ match, from, reply }) => {
+    const amount = match[1];
+    const description = match[2];
+    const category = match[3];
+    return gapi.getClient(from.username)
+      .then(client => gapi.append(client, {
+        amount: amount,
+        category: category,
+        description: description,
+        date: (new Date).toJSON().slice(0, 10),
+      }))
+      .then(msg => reply('Done!'))
+      .catch(e => reply(`Can't do this, because: <b>${e.message}</b>`, markup));
+  });
   // Help
   app.command('help', ({ reply }) =>
-    reply('<b>Message format</b>:\nSUM DESCRIPTION (for example, 1000 Sushi)', markup)
+    reply('<b>Message format</b>:\nSUM DESCRIPTION (for example, "1000 Sushi") or\nSUM DESCRIPTION; CATEGORY', markup)
   );
   // Auth key
   app.hears(/(.*)/, ({ match, from, reply }) =>
