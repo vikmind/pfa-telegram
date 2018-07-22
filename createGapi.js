@@ -10,8 +10,8 @@ module.exports = function({
 
   return {
     getClient: function getClient(username) {
-      const auth = new googleAuth();
-      const oauth2Client = new auth.OAuth2(
+      const auth = new googleAuth.GoogleAuth();
+      const oauth2Client = new auth.OAuth2Client(
         secrets.installed.client_id,
         secrets.installed.client_secret,
         secrets.installed.redirect_uris[0],
