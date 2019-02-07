@@ -91,6 +91,7 @@ module.exports = function({
       app.startWebhook(`/${path}`, null, port);
     },
     startPolling() {
+      // app.polling.offset = 0;
       app.telegram.deleteWebhook();
       app.startPolling();
     },
