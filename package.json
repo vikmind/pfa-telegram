@@ -21,6 +21,6 @@
     "node": "8.4.0"
   },
   "devDependencies": {
-    "localtunnel": "^1.8.3"
+    "localtunnel": "^1.9.1"
   }
 }
