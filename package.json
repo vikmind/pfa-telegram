@@ -13,7 +13,7 @@
     "dotenv": "^4.0.0",
     "dotenv-safe": "^4.0.4",
     "google-auth-library": "^1.6.1",
-    "googleapis": "^22.1.0",
+    "googleapis": "^39.1.0",
     "massive": "^4.4.0",
     "telegraf": "^3.27.1"
   },
